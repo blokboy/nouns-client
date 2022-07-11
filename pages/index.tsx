@@ -2,9 +2,9 @@ import React from "react"
 import type { NextPage } from "next"
 import Image from "next/image"
 import { motion } from "framer-motion"
-import Auction from "components/Auction/Auction"
-import { useNounsAuctions } from "hooks/useNounsAuctions"
 import { AuctionProps } from "../typings/auction"
+import Auction from "../components/Auction/Auction"
+import { useNounsAuctions } from "../hooks/useNounsAuctions"
 
 const Home: NextPage = () => {
   const { currentAuction } = useNounsAuctions()
