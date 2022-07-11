@@ -1,24 +1,22 @@
 import React from "react"
-import { ethers } from "ethers"
 import { createClient, OperationResult } from "urql"
 import { useAuctionStore } from "stores/useAuctionStore"
+import { ethers } from "ethers"
 import { useLayoutStore } from "stores/useLayoutStore"
 import NOUNS_ABI from "ABI/nouns.json"
 
-const Auction = () => {
+export function useNounsAuctions() {
   /*
 
-     Initialize nounsGraph Client
+   import store
 
   */
-  const nounsGraph = "https://api.thegraph.com/subgraphs/name/nounsdao/nouns-subgraph"
-  const client = createClient({ url: nounsGraph })
-  const { currentAuction, setCurrentAuction, setNounsContract, nounsContract } = useAuctionStore()
+  const { currentAuction, setCurrentAuction, setNounsContract } = useAuctionStore()
   const { signer } = useLayoutStore()
 
   /*
 
-  Initialize Nouns Contract
+    Initialize Nouns Contract and add to Store
 
   */
   const nounsContractAddress = "0x9C8fF314C9Bc7F6e59A9d9225Fb22946427eDC03"
@@ -34,9 +32,18 @@ const Auction = () => {
 
   /*
 
-      Get all Nouns Data from the Graph
+     Initialize nounsGraph Client
 
   */
+  const nounsGraph = "https://api.thegraph.com/subgraphs/name/nounsdao/nouns-subgraph"
+  const client = createClient({ url: nounsGraph })
+
+  /*
+  /*
+
+    Construct Nouns Data from the Graph
+
+*/
   const nounsAuctions = React.useMemo(async () => {
     try {
       if (!client) return
@@ -85,6 +92,11 @@ const Auction = () => {
     }
   }, [])
 
+  /*
+
+      Save Noun Data to Store
+
+   */
   React.useMemo(async () => {
     try {
       if (!nounsAuctions) return
@@ -97,11 +109,5 @@ const Auction = () => {
     }
   }, [nounsAuctions])
 
-  return (
-    <div className="w-full max-w-[1440px] mx-auto">
-      <div>{currentAuction?.id}</div>
-    </div>
-  )
+  return { currentAuction }
 }
-
-export default Auction
