@@ -131,22 +131,30 @@ const Auction = () => {
       {!!currentAuction && (
         <div>
           <div>Noun {currentAuction?.id}</div>
-          <div>
-            <div>Current Bid:</div>
-            <div>Ξ {ethers.utils.formatEther(currentAuction.amount)}</div>
+          <div className={"flex my-4 p-4 gap-4"}>
+            <div>
+              <div>Current Bid:</div>
+              <div className={"text-xl"}>Ξ {ethers.utils.formatEther(currentAuction.amount)}</div>
+            </div>
+            <div>
+              <div>Auction Ends In:</div>
+              <div className={"text-xl"}>{currentAuction.endTime}</div>
+            </div>
           </div>
-          <div>
-            <div>Auction Ends In:</div>
-            <div>{currentAuction.endTime}</div>
-          </div>
+
           {!!bids && (
             <div>
               <div>Current Bids</div>
-              {bids.map((bid, i) => (
-                <div key={bid.id}>
+              {bids.map(bid => (
+                <a
+                  href={`https://etherscan.io/tx/${bid.id}`}
+                  target="_blank"
+                  key={bid.id}
+                  className={"flex border-slate-300 border rounded-lg p-2 space-between mb-2"}
+                >
                   <div>{bid.bidder.id}</div>
-                  <div>Ξ {bid.amount}</div>
-                </div>
+                  <div>Ξ {ethers.utils.formatEther(bid.amount)}</div>
+                </a>
               ))}
             </div>
           )}
