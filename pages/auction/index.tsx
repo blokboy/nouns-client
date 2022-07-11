@@ -91,10 +91,6 @@ const Index = () => {
 
       const nouns = await nounsAuctions
       const current = nouns?.currentAuction
-
-      {
-        console.log("c", current)
-      }
       setCurrentAuction(current)
     } catch (err) {
       console.log("err", err)
