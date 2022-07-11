@@ -5,7 +5,7 @@ import { useAuctionStore } from "stores/useAuctionStore"
 import { useLayoutStore } from "stores/useLayoutStore"
 import NOUNS_ABI from "ABI/nouns.json"
 
-const Index = () => {
+const Auction = () => {
   /*
 
      Initialize nounsGraph Client
@@ -104,4 +104,4 @@ const Index = () => {
   )
 }
 
-export default Index
+export default Auction
