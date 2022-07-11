@@ -4,8 +4,17 @@ import { createClient, OperationResult } from "urql"
 import { useAuctionStore } from "stores/useAuctionStore"
 import { useLayoutStore } from "stores/useLayoutStore"
 import NOUNS_ABI from "ABI/nouns.json"
+import { BidProps } from "typings/auction"
 
 const Auction = () => {
+  /*
+
+    import store
+
+   */
+  const { currentAuction, setCurrentAuction, setNounsContract, nounsContract } = useAuctionStore()
+  const { signer } = useLayoutStore()
+
   /*
 
      Initialize nounsGraph Client
@@ -13,8 +22,6 @@ const Auction = () => {
   */
   const nounsGraph = "https://api.thegraph.com/subgraphs/name/nounsdao/nouns-subgraph"
   const client = createClient({ url: nounsGraph })
-  const { currentAuction, setCurrentAuction, setNounsContract, nounsContract } = useAuctionStore()
-  const { signer } = useLayoutStore()
 
   /*
 
@@ -34,7 +41,7 @@ const Auction = () => {
 
   /*
 
-      Get all Nouns Data from the Graph
+      Construct Nouns Data from the Graph
 
   */
   const nounsAuctions = React.useMemo(async () => {
@@ -85,6 +92,11 @@ const Auction = () => {
     }
   }, [])
 
+  /*
+
+      Save Noun Data to Store
+
+   */
   React.useMemo(async () => {
     try {
       if (!nounsAuctions) return
@@ -97,9 +109,49 @@ const Auction = () => {
     }
   }, [nounsAuctions])
 
+  const bids = React.useMemo<BidProps[] | undefined>(() => {
+    if (!currentAuction) return
+
+    return currentAuction.bids.reduce(
+      (acc: BidProps[] = [], cv: { bidder: { id: string }; amount: string; id: string }) => {
+        acc.push({
+          bidder: cv.bidder,
+          amount: cv.amount,
+          id: cv.id,
+        })
+
+        return acc
+      },
+      []
+    )
+  }, [currentAuction])
+
   return (
     <div className="w-full max-w-[1440px] mx-auto">
-      <div>{currentAuction?.id}</div>
+      {!!currentAuction && (
+        <div>
+          <div>Noun {currentAuction?.id}</div>
+          <div>
+            <div>Current Bid:</div>
+            <div>Ξ {ethers.utils.formatEther(currentAuction.amount)}</div>
+          </div>
+          <div>
+            <div>Auction Ends In:</div>
+            <div>{currentAuction.endTime}</div>
+          </div>
+          {!!bids && (
+            <div>
+              <div>Current Bids</div>
+              {bids.map((bid, i) => (
+                <div key={bid.id}>
+                  <div>{bid.bidder.id}</div>
+                  <div>Ξ {bid.amount}</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
